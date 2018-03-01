@@ -150,3 +150,32 @@ EMAIL_HOST_USER = 'xxin1903@163.com'
 EMAIL_HOST_PASSWORD = 'xy930808'
 #收件人看到的发件人
 EMAIL_FROM = 'GitHub_TTSX<xxin1903@163.com>'
+
+
+# django 缓存配置-Redis
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://192.168.120.129:6379/6",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# 设置session存放在缓存中
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+# 指定登录页面的url
+LOGIN_URL = '/user/login'
+
+# 指定django系统文件cpiul
+DEFAULT_FILE_STORAGE = 'utils.fdfs.storage.FDFSStorage'
+
+
+# 指定fdfs客户端配置文件的路径
+FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'utils/fdfs/client.conf')
+
+# 指定fdfs系统机器上nginx的ip和port
+FDFS_NGINX_URL = 'http://192.168.120.129:8888/'

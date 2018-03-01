@@ -15,7 +15,7 @@ from celery import Celery
 
 
 # 创建一个Celery的对象
-app = Celery('celery_tasks.tsks', broker='redis://192.168.120.129:6379/5')
+app = Celery('celery_tasks.tsks', broker='redis://192.168.120.255:6379/5')
 
 
 # 定义任务

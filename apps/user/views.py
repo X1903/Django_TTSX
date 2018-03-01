@@ -7,12 +7,16 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.core.mail import send_mail
 from django.contrib.auth import authenticate, login, logout
+from django_redis import get_redis_connection
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
 
 from apps.user.models import User
 from celery_tasks.tasks import send_register_active_email
+
+from apps.user.models import Address
+from apps.goods.models import GoodsSKU
 
 # Create your views here.
 
@@ -234,8 +238,13 @@ class LoginView(View):
                 # 记录用户的登录状态
                 login(request, user)
 
-                # 跳转到用户首页
-                response = redirect(reverse('goods:index'))
+                # 获取登录后要跳转到的next地址, 默认跳转到首页 /user/login?next=参数
+                next_url = request.GET.get('next', reverse('goods:index'))
+
+                print('*'*30, next_url)
+
+                # 跳转到next_url
+                response = redirect(next_url)  # HttpResponseRedirect
 
                 # 判断是否需要记住用户名
                 if remember == 'on':
@@ -268,3 +277,108 @@ class LogoutView(View):
         logout(request)
         # 返回应答跳转到登录页面
         return render(request, 'login.html')
+
+
+# 用户中心
+from utils.mixin import LoginRequestView, LoginRequiredMixin
+# class UserInfoView(View):
+# class UserInfoView(LoginRequestView):
+class UserInfoView(LoginRequiredMixin, View):
+    '''用户中心-信息页'''
+    def get(self, request):
+        '''显示用户中心'''
+
+        # 获取登录用户
+        user = request.user
+        # 获取用户的默认地址
+        address = Address.objects.get_default_address(user)
+
+        # 获取用户最近浏览记录
+        # from redis import StrictRedis
+        # conn = StrictRedis(host='', port=6379, db=6)
+        # 获取redis数据库的链接对象 StrictRedis
+        conn = get_redis_connection('default')
+        history_key = 'history_%d' % user.id
+        sku_ids = conn.lrange(history_key, 0, 4)
+
+        # 获取商品数据
+        # skus = GoodsSKU.objects.filter(id__jn=sku_ids)
+        # sku_li = []
+        # for sku_id in sku_ids:
+        #     for sku in skus:
+        #         if sku.id == int(sku_id):
+        #             sku_li.append(sku)
+
+        skus = []
+        for sku_id in sku_ids:
+            # 根据sku_idhoqu商品的新词
+            sku = GoodsSKU.objectsget(id=sku_id)
+            # 添加到skus列表中
+            skus.append(sku)
+
+        # 组织模板上下文
+        content = {'skus': skus, 'page':'user', 'address':address}
+
+
+        return render(request, 'user_center_info.html', content)
+
+
+
+# class UserOrderView(View):
+# class UserOrderView(LoginRequestView):
+class UserOrderView(LoginRequiredMixin, View):
+    '''用户中心-订单'''
+    def get(self, request):
+        '''显示用户订单'''
+        return render(request, 'user_center_order.html', {'page':'order'})
+
+# class UserAddressView(View):
+# class UserAddressView(LoginRequestView):
+class UserAddressView(LoginRequiredMixin, View):
+    '''用户中心-地址设置'''
+    def get(self, request):
+        # 获取登录的用户
+        user = request.user
+        # 获取用户默认地址
+        address = Address.objects.get_default_address(user)
+
+        # 使用模板
+        return render(request, 'user_center_site.html', {'page': 'user', 'address': address})
+
+    def post(self, request):
+        '''添加地址'''
+        # 获取参数
+        receiver = request.POST.get('receiver')
+        addr = request.POST.get('addr')
+        zip_code = request.POST.get('zip_code')
+        phone = request.POST.get('phone')
+
+        # 参数校验
+        if not all([receiver, addr, phone]):
+            return render(request, 'user_center_site.html', {'errmsg': '数据不完整'})
+
+        # 业务处理,: 添加收货地址
+        # 如果用户地址已经存在默认收货地址, 新添加的地址作为非默认地址, 否则添加地址作为默认地址
+        # 获取用户的默认地址
+        user = request.user
+
+        # 获取用户默认地址
+        address = Address.objects.get_default_address(user)
+
+        is_default = True
+        if address:
+            # 用户存在默认地址
+            is_default = False
+
+        # 添加新地址
+        Address.objects.create(user=user, receiver=receiver, addr=addr, zip_code=zip_code, phone=phone,
+                               is_default=is_default)
+
+        # 返回应答: 跳转到地址页面
+        return redirect(reverse('user:address'))
+
+
+'''
+(images/.*.jpg)
+{% static '$1' %}
+'''
