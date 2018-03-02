@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajax请求</title>
+    <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+    <script>
+        $(function () {
+            $('#btnAjax').click(function () {
+                // 发起一个ajax请求 get post
+                $.get('/cart/ajax_handle', function (data) {
+                    // 进行处理
+                    alert(data.res)
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+<input type="button" id="btnAjax" value="Ajax请求">
+</body>
+</html>

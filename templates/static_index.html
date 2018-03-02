@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'static_base.html' %}
 {% load staticfiles %}
 {% block title %}天天生鲜-首页{% endblock title %}
 {% block topfiles %}
@@ -35,7 +35,7 @@
 
             <ul class="slide_pics">
                 {% for banner in index_banner %}
-                    <li><a href="{% url 'goods:detail' banner.sku.id %}"><img src="{{ banner.image.url }}" alt="幻灯片"></a></li>
+                    <li><img src="{{ banner.image.url }}" alt="幻灯片"></li>
                 {% endfor %}
             </ul>
 
@@ -47,7 +47,7 @@
 
         <div class="adv fl">
             {% for banner in promotion_banner %}
-			<a href="{{ banner.url }}"><img src="{{ banner.image.url }}"></a>
+                <a href="{{ banner.url }}"><img src="{{ banner.image.url }}"></a>
             {% endfor %}
         </div>
 
@@ -64,7 +64,7 @@
                     <span>|</span>
 
                     {% for banner in types.title_banner %}
-                        <a href="{% url 'goods:detail' banner.sku.id %}">{{ banner.sku.name }}</a>
+                        <a href="{{ banner.url }}">{{ banner.sku.name }}</a>
                     {% endfor %}
 
                 </div>
@@ -74,11 +74,11 @@
             <div class="goods_con clearfix">
                 <div class="goods_banner fl"><img src="{{ type.image.url }}"></div>
                 <ul class="goods_list fl">
-                    {# type种类首页展示信息 #}
                     {% for banner in type.image_banner %}
+
                     <li>
-                        <h4><a href="{% url 'goods:detail' banner.sku.id %}">{{ banner.sku.name }}</a></h4>
-                        <a href="{% url 'goods:detail' banner.sku.id %}"><img src="{{ banner.sku.image.url }}"></a>
+                        <h4><a href="#">{{ banner.sku.name }}</a></h4>
+                        <a href="#"><img src="{{ banner.sku.image.url }}"></a>
                         <div class="prize">¥ {{ banner.sku.price }}</div>
                     </li>
 
@@ -95,8 +95,7 @@
 {% endblock body %}
 
 {% block bottomfiles %}
-{#    <script type="text/javascript" src="{% static 'js/slideshow.js' %}"></script>#}
-    <script type="text/javascript" src="#"></script>
+    <script type="text/javascript" src="js/slideshow.js"></script>
     <script type="text/javascript">
         BCSlideshow('focuspic');
         var oFruit = document.getElementById('fruit_more');

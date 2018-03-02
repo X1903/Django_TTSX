@@ -312,7 +312,7 @@ class UserInfoView(LoginRequiredMixin, View):
         skus = []
         for sku_id in sku_ids:
             # 根据sku_idhoqu商品的新词
-            sku = GoodsSKU.objectsget(id=sku_id)
+            sku = GoodsSKU.objects.get(id=sku_id)
             # 添加到skus列表中
             skus.append(sku)
 

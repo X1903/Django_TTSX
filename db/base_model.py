@@ -1,6 +1,8 @@
 # _*_ coding:utf-8 _*_
 __author__ = 'Xbc'
 
+
+
 from django.db import models
 
 class BaseModel(models.Model):

@@ -24,7 +24,7 @@ class AddressManger(models.Manager):
             # address = Address.objects.get(user=user, is_default=True)
             address = self.get(user=user, is_default=True)
         # except Address.DoesNotExist:
-        except self.DoesNotExist:
+        except self.model.DoesNotExist:
             # 用户不存在默认地址
             address = None
         return address

@@ -1,5 +1,5 @@
 # _*_ coding:utf-8 _*_
-__author__ = 'Xbc'
+__author__ = 'XbcdX'
 
 from django.core.files.storage import Storage
 from fdfs_client.client import Fdfs_client

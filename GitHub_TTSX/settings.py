@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'haystack',
     'tinymce',    # 富文本注册
     'apps.user',  # 用户模块
     'apps.goods', # 商品模块
@@ -84,9 +85,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'TTSX',
         'USER':'root',
-        'PASSWORD':'q8022761',
-        'HOST':'127.0.0.1',
-        'PORT':3306
+        'PASSWORD':'@Qq8022761',
+        'HOST':'192.168.1.112',
+        'PORT':3306,
 
     }
 }
@@ -179,3 +180,22 @@ FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'utils/fdfs/client.conf')
 
 # 指定fdfs系统机器上nginx的ip和port
 FDFS_NGINX_URL = 'http://192.168.120.129:8888/'
+
+
+# 全文检索框架配置
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 使用whoosh引擎
+        # 'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',
+        # 索引文件路径
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
+}
+
+# 当添加、修改、删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+# 指定搜索结果每页的条数
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 12
+
