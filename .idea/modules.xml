@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/GitHub_TTSX.iml" filepath="$PROJECT_DIR$/.idea/GitHub_TTSX.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../VueJs/.idea/VueJs.iml" filepath="$PROJECT_DIR$/../VueJs/.idea/VueJs.iml" />
     </modules>
   </component>
 </project>

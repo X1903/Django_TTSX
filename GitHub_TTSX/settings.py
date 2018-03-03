@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'TTSX',
         'USER':'root',
         'PASSWORD':'@Qq8022761',
-        'HOST':'192.168.1.112',
+        'HOST':'192.168.1.121',
         'PORT':3306,
 
     }
