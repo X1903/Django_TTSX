@@ -25,8 +25,8 @@
 				<div class="num_add fl">
 					<input type="text" class="num_show fl" value="1">
 					<a href="javascript:;" class="add fr">+</a>
-					<a href="javascript:;" class="minus fr">-</a>
-				</div>
+					<a href="javascript:;" class="minus fr">-</a>	
+				</div> 
 			</div>
             <div>
                 <div>其他规格：</div>
@@ -63,18 +63,18 @@
 
 		<div class="r_wrap fr clearfix">
 			<ul class="detail_tab clearfix">
-				<li class="active">商品介绍</li>
-				<li>评论</li>
+				<li class="active" id="tag_detail">商品介绍</li>
+				<li id="tag_comment">评论</li>
 			</ul>
             <!-- 显示商品的详情信息 -->
-			<div class="tab_content">
+			<div class="tab_content" id="tab_detail">
 				<dl>
 					<dt>商品详情：</dt>
 				    <dd>{{ sku.goods.detail|safe }}</dd>
                 </dl>
 			</div>
             <!-- 显示商品的评论信息 -->
-            <div class="tab_content" style="display: none;">
+            <div class="tab_content" id="tab_comment" style="display: none;">
                 {% for order_sku in order_skus %}
 				<dl>
 					<dt>评论时间：{{ order_sku.update_time }}&nbsp;&nbsp;评论用户：{{ order_sku.order.user.username }}</dt>
@@ -94,6 +94,18 @@
 {% block bottomfiles %}
 	<script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
 	<script type="text/javascript">
+        $('#tag_detail').click(function () {
+            $(this).addClass('active')
+            $('#tag_comment').removeClass('active')
+            $('#tab_detail').show()
+            $('#tab_comment').hide()
+        })
+        $('#tag_comment').click(function () {
+            $(this).addClass('active')
+            $('#tag_detail').removeClass('active')
+            $('#tab_detail').hide()
+            $('#tab_comment').show()
+        })
         // 计算商品的总价
         function update_sku_amount() {
             // 获取商品的价格和数目
@@ -179,6 +191,5 @@
                 }
             })
 		})
-
 	</script>
 {% endblock bottomfiles %}

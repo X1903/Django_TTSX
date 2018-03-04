@@ -94,22 +94,3 @@
 
 {% endblock body %}
 
-{% block bottomfiles %}
-{#    <script type="text/javascript" src="{% static 'js/slideshow.js' %}"></script>#}
-    <script type="text/javascript" src="#"></script>
-    <script type="text/javascript">
-        BCSlideshow('focuspic');
-        var oFruit = document.getElementById('fruit_more');
-        var oShownum = document.getElementById('show_count');
-
-        var hasorder = localStorage.getItem('order_finish');
-
-        if (hasorder) {
-            oShownum.innerHTML = '2';
-        }
-
-        oFruit.onclick = function () {
-            window.location.href = 'list.html';
-        }
-    </script>
-{% endblock bottomfiles %}

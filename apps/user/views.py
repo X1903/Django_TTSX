@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic import View
 from django.conf import settings
 from django.http import HttpResponse
+from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.contrib.auth import authenticate, login, logout
 from django_redis import get_redis_connection
@@ -13,10 +14,12 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
 
 from apps.user.models import User
+from apps.order.models import OrderInfo
+from apps.goods.models import GoodsSKU
 from celery_tasks.tasks import send_register_active_email
 
 from apps.user.models import Address
-from apps.goods.models import GoodsSKU
+from apps.order.models import OrderGoods
 
 # Create your views here.
 
@@ -323,14 +326,76 @@ class UserInfoView(LoginRequiredMixin, View):
         return render(request, 'user_center_info.html', content)
 
 
-
+# user/order/页码
 # class UserOrderView(View):
 # class UserOrderView(LoginRequestView):
 class UserOrderView(LoginRequiredMixin, View):
     '''用户中心-订单'''
-    def get(self, request):
+    def get(self, request, page):
         '''显示用户订单'''
-        return render(request, 'user_center_order.html', {'page':'order'})
+
+        # 获取登录用户
+        user = request.user
+        # 获取用户的订单信息
+        orders = OrderInfo.objects.filter(user=user).order_by('-create_time')
+
+        # 遍历获取每个订单中单个商品的信息
+        for order in orders:
+            # 获取和order订单关联的订单商品
+            order_skus = OrderGoods.objects.filter(order=order)
+            # 遍历计算订单中的每一个商品的小计
+            for order_sku in order_skus:
+                # 计算小计
+                amount = order_sku.count*order_sku.price
+                # 给order_sku增加属性amount, 保存订单商品的信息
+                order_sku.amount = amount
+
+
+            # 获取订单支付状态的名称
+            order.status_name = OrderInfo.ORDER_STATUS[order.order_status]
+            # 计算订单的实付款
+
+            # 计算订单实付款
+            order.total_pay = order.total_price + order.transit_price
+
+            # 给order增加属性order_skus, 保存商品的信息
+            order.order_skus = order_skus
+
+
+        # 分页
+        paginator = Paginator(orders, 1)
+
+        # 处理页码
+        page = int(page)
+        if page > paginator.num_pages or page <= 0:
+            # 默认显示第1页
+            page = 1
+
+        # 获取第page页的Page对象
+        order_page = paginator.page(page)
+
+        # 页码处理(页面最多只显示出5个页码)
+        # 1.总页数不足5页，显示所有页码
+        # 2.当前页是前3页，显示1-5页
+        # 3.当前页是后3页，显示后5页
+        # 4.其他情况，显示当前页的前2页，当前页，当前页后2页
+        num_pages = paginator.num_pages
+        if num_pages < 5:
+            pages = range(1, num_pages + 1)
+        elif page <= 3:
+            pages = range(1, 6)
+        elif num_pages - page <= 2:
+            pages = range(num_pages - 4, num_pages + 1)
+        else:
+            pages = range(page - 2, page + 3)
+
+        # 组织模板上下文
+        context = {'order_page': order_page,
+                   'pages': pages,
+                   'page': 'order'}
+
+        # 使用模板
+        return render(request, 'user_center_order.html', context)
 
 # class UserAddressView(View):
 # class UserAddressView(LoginRequestView):

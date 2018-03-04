@@ -23,9 +23,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'l*yx#7&wy%*dccam5**h_anc3%(w-+3x!0q%-^s@v^-36)^15h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -86,7 +88,7 @@ DATABASES = {
         'NAME': 'TTSX',
         'USER':'root',
         'PASSWORD':'@Qq8022761',
-        'HOST':'192.168.1.121',
+        'HOST':'192.168.13.32',
         'PORT':3306,
 
     }

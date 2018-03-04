@@ -63,4 +63,3 @@ class OrderGoods(BaseModel):
         db_table = 'df_order_goods'
         verbose_name = '订单商品'
         verbose_name_plural = verbose_name
-

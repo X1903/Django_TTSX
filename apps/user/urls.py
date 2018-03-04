@@ -19,6 +19,6 @@ urlpatterns = [
     # url(r'^address$', login_required(views.UserAddressView.as_view()), name='address'),  # 用户中心地址页
 
     url(r'^$', views.UserInfoView.as_view(), name='user'),
-    url(r'^order$', views.UserOrderView.as_view(), name='order'),
-    url(r'^address$', views.UserAddressView.as_view(), name='address')
+    url(r'^order/(?P<page>\d+)$', views.UserOrderView.as_view(), name='order'), # 用户中心-订单页
+    url(r'^address$', views.UserAddressView.as_view(), name='address'), # 用户中心-地址页
 ]
